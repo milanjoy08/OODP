@@ -1,691 +1,827 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OODP Mini Project</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <style>
-    /* ── CSS Variables ── */
-    :root {
-      --bg:       #f5f3ee;
-      --surface:  #ffffff;
-      --border:   #e2ddd5;
-      --accent:   #2563eb;
-      --accent2:  #f59e0b;
-      --text:     #1a1a2e;
-      --muted:    #6b7280;
-      --radius:   14px;
-      --shadow:   0 4px 24px rgba(0,0,0,0.07);
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OODP — Object-Oriented Design & Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:        #0a0a0f;
+  --bg2:       #111118;
+  --bg3:       #18181f;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.14);
+  --text:      #f0ede8;
+  --muted:     #7a7887;
+  --muted2:    #9d9aaa;
+  --accent:    #7c6af5;
+  --accent2:   #c084fc;
+  --gold:      #f0c060;
+  --green:     #34d399;
+  --red:       #f87171;
+  --r:         12px;
+  --rl:        20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Geist',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  font-size:16px;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::selection{background:rgba(124,106,245,.35);color:#fff}
+a{text-decoration:none;color:inherit}
+button{font-family:'Geist',sans-serif;cursor:pointer;border:none;outline:none}
 
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Sora', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      font-size: 16px;
-    }
-    a { text-decoration: none; color: inherit; }
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
 
-    /* ── Navbar ── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(245,243,238,0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-    }
-    .nav-logo {
-      font-family: 'Space Mono', monospace;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: -0.5px;
-    }
-    .nav-logo span { color: var(--text); }
-    .nav-links {
-      display: flex;
-      gap: 0.25rem;
-      list-style: none;
-    }
-    .nav-links a {
-      padding: 0.4rem 0.9rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--muted);
-      transition: all 0.2s;
-    }
-    .nav-links a:hover,
-    .nav-links a.active {
-      background: var(--accent);
-      color: #fff;
-    }
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 6px;
-    }
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--text);
-      border-radius: 2px;
-      transition: all 0.3s;
-    }
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:60px;
+  padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(10,10,15,.85);
+  backdrop-filter:blur(20px);
+  transition:border-color .3s;
+}
+nav.opaque{border-color:var(--border2)}
+.nav-logo{
+  font-family:'Geist Mono',monospace;
+  font-size:.9rem;font-weight:500;
+  color:var(--text);
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 12px var(--accent);
+  animation:pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.nav-links{list-style:none;display:flex;gap:2px}
+.nav-links a{
+  font-size:.83rem;font-weight:500;letter-spacing:.02em;
+  color:var(--muted);
+  padding:6px 14px;border-radius:8px;
+  transition:color .2s,background .2s;
+}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.nav-links a.active{color:var(--text);background:rgba(124,106,245,.2)}
+.hamburger{
+  display:none;flex-direction:column;gap:5px;
+  background:none;border:none;padding:6px;cursor:pointer;
+}
+.hamburger span{
+  display:block;width:22px;height:1.5px;
+  background:var(--muted2);border-radius:2px;transition:.3s;
+}
 
-    /* ── Sections ── */
-    section {
-      display: none;
-      min-height: 100vh;
-      padding: 5rem 2rem 4rem;
-      max-width: 1000px;
-      margin: 0 auto;
-      animation: fadeUp 0.45s ease both;
-    }
-    section.active { display: block; }
+/* ══ SECTIONS ══ */
+section{
+  display:none;min-height:100vh;
+  padding:120px 40px 80px;
+  max-width:1100px;margin:0 auto;
+  opacity:0;transform:translateY(28px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+section.active{display:block}
+section.visible{opacity:1;transform:translateY(0)}
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+/* ══ NOISE OVERLAY ══ */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size:200px;opacity:.35;
+}
 
-    /* ── Tag/Badge ── */
-    .badge {
-      display: inline-block;
-      background: #dbeafe;
-      color: var(--accent);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 100px;
-      margin-bottom: 1.2rem;
-    }
+/* ══ HOME ══ */
+.hero{
+  min-height:90vh;display:flex;flex-direction:column;justify-content:center;
+  position:relative;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Geist Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent2);margin-bottom:28px;
+  animation:fadeUp .6s ease both;
+}
+.hero-eyebrow::before{
+  content:'';width:24px;height:1px;background:var(--accent2);opacity:.6;
+}
+.hero h1{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(3rem,7vw,6.5rem);
+  font-weight:400;line-height:1.05;
+  letter-spacing:-.02em;
+  margin-bottom:28px;
+  animation:fadeUp .6s .1s ease both;
+}
+.hero h1 .italic{font-style:italic;color:var(--muted2)}
+.hero h1 .highlight{
+  position:relative;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-desc{
+  font-size:1.1rem;color:var(--muted2);max-width:500px;
+  margin-bottom:44px;line-height:1.75;
+  animation:fadeUp .6s .2s ease both;
+}
+.hero-actions{
+  display:flex;gap:14px;flex-wrap:wrap;
+  animation:fadeUp .6s .3s ease both;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--accent);color:#fff;
+  padding:13px 26px;border-radius:10px;
+  font-size:.9rem;font-weight:500;
+  transition:opacity .2s,transform .2s,box-shadow .2s;
+  box-shadow:0 0 0 0 rgba(124,106,245,0);
+}
+.btn-primary:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,106,245,.35)}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:var(--muted2);
+  padding:13px 26px;border-radius:10px;
+  font-size:.9rem;font-weight:500;
+  border:1px solid var(--border2);
+  transition:border-color .2s,color .2s,background .2s;
+}
+.btn-secondary:hover{border-color:var(--accent);color:var(--text);background:rgba(124,106,245,.08)}
 
-    /* ── HOME ── */
-    .hero {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 80vh;
-    }
-    .hero h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -1.5px;
-      margin-bottom: 1.2rem;
-    }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--accent);
-      position: relative;
-    }
-    .hero h1 em::after {
-      content: '';
-      position: absolute;
-      bottom: 2px;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: var(--accent2);
-      border-radius: 2px;
-    }
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted);
-      max-width: 520px;
-      margin-bottom: 2rem;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      padding: 0.75rem 1.75rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      border: none;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .btn:hover { background: #1d4ed8; transform: translateY(-2px); }
-    .btn-outline {
-      background: transparent;
-      color: var(--accent);
-      border: 2px solid var(--accent);
-    }
-    .btn-outline:hover { background: var(--accent); color: #fff; }
-    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  margin-top:80px;border-top:1px solid var(--border);
+  animation:fadeUp .6s .45s ease both;
+}
+.hero-stat{
+  padding:28px 0 0;
+  border-right:1px solid var(--border);
+}
+.hero-stat:last-child{border-right:none}
+.hero-stat .val{
+  font-family:'Instrument Serif',serif;font-style:italic;
+  font-size:2.6rem;line-height:1;
+  background:linear-gradient(135deg,var(--text) 60%,var(--muted) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;
+}
+.hero-stat .lbl{font-size:.75rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
 
-    .stats {
-      display: flex;
-      gap: 2rem;
-      margin-top: 4rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-    .stat-item strong {
-      display: block;
-      font-size: 1.8rem;
-      font-weight: 700;
-      font-family: 'Space Mono', monospace;
-      color: var(--accent);
-    }
-    .stat-item span { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+/* ══ SECTION HEADER ══ */
+.sec-kicker{
+  font-family:'Geist Mono',monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.sec-kicker::after{content:'';flex:1;max-width:40px;height:1px;background:var(--accent);opacity:.4}
+.sec-title{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2rem,4vw,3.4rem);
+  font-weight:400;line-height:1.15;letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+.sec-sub{color:var(--muted2);font-size:.95rem;max-width:500px;margin-bottom:60px}
 
-    /* ── ABOUT ── */
-    .section-header { margin-bottom: 3rem; }
-    .section-header h2 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 0.6rem;
-    }
-    .section-header p { color: var(--muted); max-width: 560px; }
+/* ══ ABOUT ══ */
+.about-body{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  background:var(--border);
+  border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;
+  margin-bottom:48px;
+}
+.about-panel{
+  background:var(--bg2);padding:36px 32px;
+  transition:background .25s;
+}
+.about-panel:hover{background:var(--bg3)}
+.about-panel .panel-num{
+  font-family:'Geist Mono',monospace;font-size:.7rem;
+  color:var(--muted);letter-spacing:.1em;margin-bottom:20px;
+}
+.about-panel .panel-icon{font-size:1.4rem;margin-bottom:14px;display:block}
+.about-panel h3{font-size:1.05rem;font-weight:500;margin-bottom:10px}
+.about-panel p{font-size:.875rem;color:var(--muted2);line-height:1.75}
+.about-prose{
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;
+}
+.about-prose p{font-size:.95rem;color:var(--muted2);line-height:1.8;margin-bottom:16px}
+.about-prose p strong{color:var(--text);font-weight:500}
+.code-block{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:24px;
+  font-family:'Geist Mono',monospace;font-size:.78rem;
+  line-height:1.8;color:var(--muted2);
+}
+.code-block .kw{color:var(--accent2)}
+.code-block .fn{color:var(--gold)}
+.code-block .str{color:var(--green)}
+.code-block .cm{color:var(--muted);font-style:italic}
 
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    .about-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.8rem;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s;
-    }
-    .about-card:hover { transform: translateY(-4px); }
-    .about-card .icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .about-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .about-card p { font-size: 0.9rem; color: var(--muted); }
+/* ══ FEATURES ══ */
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;
+}
+.feat-card{
+  background:var(--bg2);padding:36px 28px;
+  position:relative;overflow:hidden;
+  transition:background .25s;cursor:default;
+}
+.feat-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 0% 0%,rgba(124,106,245,.08) 0%,transparent 60%);
+  opacity:0;transition:opacity .35s;
+}
+.feat-card:hover{background:var(--bg3)}
+.feat-card:hover::after{opacity:1}
+.feat-idx{
+  font-family:'Geist Mono',monospace;font-size:.68rem;letter-spacing:.12em;
+  color:var(--muted);margin-bottom:28px;display:block;
+}
+.feat-icon-wrap{
+  width:44px;height:44px;border-radius:10px;
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-bottom:20px;
+  background:rgba(255,255,255,.03);
+}
+.feat-card h3{font-size:1rem;font-weight:500;margin-bottom:10px}
+.feat-card p{font-size:.85rem;color:var(--muted2);line-height:1.7}
+.feat-tag{
+  display:inline-block;margin-top:18px;
+  font-size:.7rem;font-family:'Geist Mono',monospace;
+  color:var(--accent);background:rgba(124,106,245,.12);
+  padding:3px 10px;border-radius:4px;
+}
 
-    /* ── FEATURES ── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-    .feature-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem 1.6rem;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: default;
-    }
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent);
-      transform: scaleX(0);
-      transition: transform 0.3s;
-    }
-    .feature-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
-    .feature-card:hover::before { transform: scaleX(1); }
-    .feature-card .num {
-      font-family: 'Space Mono', monospace;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #e5e7eb;
-      line-height: 1;
-      margin-bottom: 0.8rem;
-    }
-    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .feature-card p { font-size: 0.875rem; color: var(--muted); }
-    #features-list { /* populated by JS */ }
+/* ══ CONTACT ══ */
+.contact-layout{
+  display:grid;grid-template-columns:1fr 1.5fr;gap:60px;align-items:start;
+}
+.contact-aside h3{
+  font-family:'Instrument Serif',serif;font-size:1.5rem;
+  margin-bottom:12px;line-height:1.3;
+}
+.contact-aside p{font-size:.875rem;color:var(--muted2);line-height:1.8;margin-bottom:32px}
+.aside-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.aside-list li{
+  display:flex;align-items:center;gap:12px;
+  font-size:.83rem;color:var(--muted2);
+}
+.aside-list li::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  flex-shrink:0;background:var(--accent);
+  box-shadow:0 0 8px var(--accent);
+}
+.class-badge{
+  margin-top:44px;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:20px;
+  font-family:'Geist Mono',monospace;font-size:.72rem;
+  color:var(--muted);line-height:1.9;
+}
+.class-badge .kw{color:var(--accent2)}
+.class-badge .cn{color:var(--gold)}
+.form-panel{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--rl);padding:40px;
+}
+.form-field{margin-bottom:22px}
+.form-field label{
+  display:block;font-size:.72rem;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px;
+}
+.form-field input,.form-field textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:12px 16px;
+  font-family:'Geist',sans-serif;font-size:.9rem;
+  color:var(--text);outline:none;resize:vertical;
+  transition:border-color .2s,box-shadow .2s;
+}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--muted)}
+.form-field input:focus,.form-field textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(124,106,245,.15);
+}
+.form-field input.err,.form-field textarea.err{
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(248,113,113,.12);
+}
+.field-err{
+  font-size:.75rem;color:var(--red);margin-top:6px;
+  display:none;align-items:center;gap:5px;
+}
+.field-err.show{display:flex}
+.field-err::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--red);flex-shrink:0}
+.btn-submit{
+  width:100%;padding:15px;
+  background:var(--accent);color:#fff;
+  border-radius:10px;font-size:.95rem;font-weight:500;
+  transition:opacity .2s,transform .2s,box-shadow .2s;
+  box-shadow:0 4px 24px rgba(124,106,245,.3);
+}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 32px rgba(124,106,245,.45)}
+.btn-submit:active{transform:translateY(0)}
+.success-msg{
+  display:none;
+  margin-top:18px;padding:16px 20px;
+  background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);
+  border-radius:var(--r);font-size:.875rem;color:var(--green);
+  align-items:center;gap:10px;line-height:1.5;
+}
+.success-msg.show{display:flex;animation:fadeUp .4s ease both}
 
-    /* ── CONTACT ── */
-    .contact-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 3rem;
-      align-items: start;
-    }
-    .contact-info h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .contact-info p  { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; }
-    .contact-info ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
-    .contact-info li {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.875rem;
-      color: var(--muted);
-    }
-    .contact-info li .dot {
-      width: 8px; height: 8px;
-      background: var(--accent);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+/* ══ FOOTER ══ */
+footer{
+  border-top:1px solid var(--border);
+  padding:36px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+  font-size:.78rem;color:var(--muted);
+  max-width:1100px;margin:0 auto;
+}
+footer strong{color:var(--text);font-weight:500}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--muted);transition:color .2s}
+.footer-links a:hover{color:var(--text)}
 
-    .form-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      box-shadow: var(--shadow);
-    }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-    }
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: 'Sora', sans-serif;
-      font-size: 0.9rem;
-      background: var(--bg);
-      color: var(--text);
-      transition: border-color 0.2s;
-      outline: none;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus { border-color: var(--accent); background: #fff; }
-    .form-group textarea { resize: vertical; min-height: 110px; }
-    .error-msg {
-      font-size: 0.78rem;
-      color: #ef4444;
-      margin-top: 4px;
-      display: none;
-    }
-    .error-msg.show { display: block; }
-    .form-group input.err,
-    .form-group textarea.err { border-color: #ef4444; }
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.stagger>*{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}
+.stagger.go>*{opacity:1;transform:none}
+.stagger.go>*:nth-child(1){transition-delay:.05s}
+.stagger.go>*:nth-child(2){transition-delay:.12s}
+.stagger.go>*:nth-child(3){transition-delay:.19s}
+.stagger.go>*:nth-child(4){transition-delay:.26s}
 
-    /* success banner */
-    #success-banner {
-      display: none;
-      background: #dcfce7;
-      border: 1.5px solid #86efac;
-      color: #166534;
-      border-radius: 10px;
-      padding: 1rem 1.2rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-top: 1rem;
-      text-align: center;
-    }
-    #success-banner.show { display: block; animation: fadeUp 0.3s ease; }
-
-    /* ── Footer ── */
-    footer {
-      background: var(--text);
-      color: #9ca3af;
-      text-align: center;
-      padding: 1.5rem 2rem;
-      font-size: 0.8rem;
-    }
-    footer strong { color: #fff; }
-
-    /* ── Responsive ── */
-    @media (max-width: 700px) {
-      nav { padding: 0 1.2rem; }
-      .nav-links { display: none; flex-direction: column; position: absolute;
-        top: 64px; left: 0; right: 0;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        padding: 1rem; gap: 0.25rem; }
-      .nav-links.open { display: flex; }
-      .hamburger { display: flex; }
-      section { padding: 4rem 1.2rem 3rem; }
-      .about-grid { grid-template-columns: 1fr; }
-      .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
-    }
-  </style>
+/* ══ RESPONSIVE ══ */
+@media(max-width:720px){
+  nav{padding:0 20px}
+  .nav-links{
+    display:none;flex-direction:column;
+    position:absolute;top:60px;left:0;right:0;
+    background:rgba(10,10,15,.97);backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    padding:16px 20px;gap:2px;
+  }
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  section{padding:100px 20px 60px}
+  .about-body,.about-prose,.contact-layout{grid-template-columns:1fr}
+  .hero-grid{grid-template-columns:1fr;gap:0}
+  .hero-stat{border-right:none;border-bottom:1px solid var(--border);padding:20px 0}
+  .hero-stat:last-child{border-bottom:none}
+  .form-panel{padding:26px 20px}
+  footer{flex-direction:column;align-items:flex-start;padding:28px 20px}
+}
+</style>
 </head>
 <body>
 
-<!-- ── NAVBAR ── -->
-<nav>
-  <div class="nav-logo">OO<span>DP</span></div>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#" onclick="navigate('home')" class="active" id="nav-home">Home</a></li>
-    <li><a href="#" onclick="navigate('about')" id="nav-about">About</a></li>
-    <li><a href="#" onclick="navigate('features')" id="nav-features">Features</a></li>
-    <li><a href="#" onclick="navigate('contact')" id="nav-contact">Contact</a></li>
-  </ul>
-  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    OODP
   </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" id="nav-home"     onclick="navigate('home')"     class="active">Home</a></li>
+    <li><a href="#" id="nav-about"    onclick="navigate('about')">About</a></li>
+    <li><a href="#" id="nav-features" onclick="navigate('features')">Features</a></li>
+    <li><a href="#" id="nav-contact"  onclick="navigate('contact')">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
-<!-- ── HOME ── -->
+<!-- ══ HOME ══ -->
 <section id="home" class="active">
   <div class="hero">
-    <span class="badge">Mini Project · OODP</span>
-    <h1>Object-Oriented<br>Design &amp; <em>Programming</em></h1>
-    <p>A beginner-friendly project demonstrating core OOP concepts — classes, objects, and methods — built with pure HTML, CSS, and JavaScript.</p>
-    <div class="hero-btns">
-      <button class="btn" onclick="navigate('features')">Explore Features →</button>
-      <button class="btn btn-outline" onclick="navigate('about')">Learn More</button>
+    <span class="hero-eyebrow">OODP Mini Project</span>
+    <h1>
+      Object-Oriented<br>
+      <span class="highlight">Design &amp;</span><br>
+      <span class="italic">Programming</span>
+    </h1>
+    <p class="hero-desc">
+      A hands-on demonstration of OOP in JavaScript — classes, encapsulation,
+      and dynamic rendering — wrapped in a modern, production-grade interface.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="navigate('features')">Explore features →</button>
+      <button class="btn-secondary" onclick="navigate('about')">About the project</button>
     </div>
-    <div class="stats" id="stats-container"></div>
+    <div class="hero-grid stagger" id="stats-container">
+      <!-- Stat objects rendered here by JS -->
+    </div>
   </div>
 </section>
 
-<!-- ── ABOUT ── -->
+<!-- ══ ABOUT ══ -->
 <section id="about">
-  <div class="section-header">
-    <span class="badge">About</span>
-    <h2>What is this project?</h2>
-    <p>A hands-on introduction to Object-Oriented Programming concepts using real, working code.</p>
+  <div class="sec-kicker">About</div>
+  <h2 class="sec-title">What is this project?</h2>
+  <p class="sec-sub">A real-world application of Object-Oriented Programming, built from scratch using only HTML, CSS, and vanilla JavaScript.</p>
+
+  <div class="about-body stagger" id="about-cards">
+    <!-- AboutCard objects rendered here by JS -->
   </div>
-  <div class="about-grid" id="about-grid"></div>
+
+  <div class="about-prose">
+    <div>
+      <p>This project was built as part of an <strong>Object-Oriented Design and Programming (OODP)</strong> course. It demonstrates how real software applies OOP — not in theory, but in practice, right here in your browser.</p>
+      <p>Every element you interact with on this site is powered by a JavaScript <strong>class</strong>. The navigation, the cards, the contact form — all are objects with properties and methods, keeping the code clean, modular, and extensible.</p>
+    </div>
+    <div class="code-block">
+      <span class="cm">// Example from this project</span><br>
+      <span class="kw">class</span> <span class="fn">Feature</span> {<br>
+      &nbsp;&nbsp;<span class="fn">constructor</span>(num, title, desc) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.number = num;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.title = title;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.description = desc;<br>
+      &nbsp;&nbsp;}<br>
+      <br>
+      &nbsp;&nbsp;<span class="cm">// Method: render HTML</span><br>
+      &nbsp;&nbsp;<span class="fn">render</span>() {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="str">`&lt;div class="feat-card"&gt;`</span>;<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </div>
 </section>
 
-<!-- ── FEATURES ── -->
+<!-- ══ FEATURES ══ -->
 <section id="features">
-  <div class="section-header">
-    <span class="badge">Features</span>
-    <h2>What's inside?</h2>
-    <p>Each feature is created as a JavaScript object — demonstrating OOP in action.</p>
+  <div class="sec-kicker">Features</div>
+  <h2 class="sec-title">What's inside</h2>
+  <p class="sec-sub">Each card below is a <code style="font-family:'Geist Mono',monospace;font-size:.85em;color:var(--accent)">Feature</code> object, instantiated from a class and rendered via its own <code style="font-family:'Geist Mono',monospace;font-size:.85em;color:var(--accent)">render()</code> method.</p>
+  <div class="features-grid stagger" id="features-list">
+    <!-- Feature objects rendered here by JS -->
   </div>
-  <div class="features-grid" id="features-list"></div>
 </section>
 
-<!-- ── CONTACT ── -->
+<!-- ══ CONTACT ══ -->
 <section id="contact">
-  <div class="section-header">
-    <span class="badge">Contact</span>
-    <h2>Get in Touch</h2>
-    <p>Fill out the form below. Form handling is powered by a JavaScript class.</p>
-  </div>
-  <div class="contact-wrap">
-    <div class="contact-info">
-      <h3>Why contact us?</h3>
-      <p>Have questions about OOP? Want to collaborate or share feedback? Reach out!</p>
-      <ul>
-        <li><span class="dot"></span> Student-friendly project</li>
-        <li><span class="dot"></span> Built for learning purposes</li>
-        <li><span class="dot"></span> Open for suggestions</li>
-        <li><span class="dot"></span> Form validation included</li>
+  <div class="sec-kicker">Contact</div>
+  <h2 class="sec-title">Get in touch</h2>
+  <p class="sec-sub">Form handling is powered by a <code style="font-family:'Geist Mono',monospace;font-size:.85em;color:var(--accent)">ContactForm</code> class with built-in validation methods.</p>
+
+  <div class="contact-layout">
+    <div class="contact-aside">
+      <h3>Have a question about OOP?</h3>
+      <p>This form demonstrates encapsulation — all validation logic lives inside the <strong>ContactForm</strong> class, keeping the code clean and reusable.</p>
+      <ul class="aside-list">
+        <li>Student-friendly project</li>
+        <li>Built for learning OOP</li>
+        <li>Fully vanilla JavaScript</li>
+        <li>Inline form validation</li>
       </ul>
+      <div class="class-badge">
+        <span class="kw">new</span> <span class="cn">ContactForm</span>(<br>
+        &nbsp;&nbsp;<span style="color:var(--green)">'f-name'</span>,<br>
+        &nbsp;&nbsp;<span style="color:var(--green)">'f-email'</span>,<br>
+        &nbsp;&nbsp;<span style="color:var(--green)">'f-msg'</span><br>
+        ).<span style="color:var(--gold)">validate</span>();
+      </div>
     </div>
-    <div class="form-card">
-      <div class="form-group">
+
+    <div class="form-panel">
+      <div class="form-field">
         <label>Full Name</label>
-        <input type="text" id="f-name" placeholder="e.g. Alice Johnson"/>
-        <div class="error-msg" id="err-name">Name must be at least 2 characters.</div>
+        <input type="text" id="f-name" placeholder="e.g. Arjun Kumar"/>
+        <div class="field-err" id="err-name">Name must be at least 2 characters</div>
       </div>
-      <div class="form-group">
+      <div class="form-field">
         <label>Email Address</label>
-        <input type="email" id="f-email" placeholder="alice@example.com"/>
-        <div class="error-msg" id="err-email">Please enter a valid email address.</div>
+        <input type="email" id="f-email" placeholder="arjun@example.com"/>
+        <div class="field-err" id="err-email">Please enter a valid email address</div>
       </div>
-      <div class="form-group">
+      <div class="form-field">
         <label>Message</label>
-        <textarea id="f-message" placeholder="Your message here…"></textarea>
-        <div class="error-msg" id="err-message">Message must be at least 10 characters.</div>
+        <textarea id="f-msg" rows="5" placeholder="Write your message here…"></textarea>
+        <div class="field-err" id="err-msg">Message must be at least 10 characters</div>
       </div>
-      <button class="btn" style="width:100%;justify-content:center" onclick="submitForm()">Send Message ✉</button>
-      <div id="success-banner">✅ Message sent! Thank you for reaching out.</div>
+      <button class="btn-submit" onclick="submitForm()">Send Message</button>
+      <div class="success-msg" id="success-banner">
+        <span style="font-size:1.1rem">✓</span>
+        <span id="success-text">Message sent successfully!</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
+<!-- ══ FOOTER ══ -->
 <footer>
-  <p>Built with ♥ for <strong>OODP Mini Project</strong> · Vanilla HTML, CSS &amp; JavaScript</p>
+  <p>Built with care for <strong>OODP Mini Project</strong> &mdash; Vanilla HTML, CSS &amp; JS</p>
+  <div class="footer-links">
+    <a href="#" onclick="navigate('home')">Home</a>
+    <a href="#" onclick="navigate('about')">About</a>
+    <a href="#" onclick="navigate('features')">Features</a>
+    <a href="#" onclick="navigate('contact')">Contact</a>
+  </div>
 </footer>
 
-<!-- ════════════════════════════════
-     J A V A S C R I P T  (OOP)
-     ════════════════════════════════ -->
+<!-- ════════════════════════
+  JAVASCRIPT  ——  OOP
+════════════════════════════ -->
 <script>
+"use strict";
 
-  /* ──────────────────────────────────
-     CLASS 1: Feature
-     Represents a single project feature
-  ────────────────────────────────── */
-  class Feature {
-    constructor(number, title, description) {
-      this.number      = number;
-      this.title       = title;
-      this.description = description;
-    }
+/* ─────────────────────────────────────────────
+   CLASS 1 · Stat
+   Represents a homepage statistic.
+   Each object knows how to render itself.
+───────────────────────────────────────────── */
+class Stat {
+  constructor(value, label) {
+    this.value = value;
+    this.label = label;
+  }
+  render() {
+    return `<div class="hero-stat">
+      <div class="val">${this.value}</div>
+      <div class="lbl">${this.label}</div>
+    </div>`;
+  }
+}
 
-    // Method: renders the feature as an HTML card string
-    render() {
-      return `
-        <div class="feature-card">
-          <div class="num">0${this.number}</div>
-          <h3>${this.title}</h3>
-          <p>${this.description}</p>
-        </div>`;
-    }
+/* ─────────────────────────────────────────────
+   CLASS 2 · Feature
+   Represents a feature card.
+───────────────────────────────────────────── */
+class Feature {
+  constructor(num, icon, title, description, tag) {
+    this.num         = num;
+    this.icon        = icon;
+    this.title       = title;
+    this.description = description;
+    this.tag         = tag;
+  }
+  render() {
+    return `
+      <div class="feat-card">
+        <span class="feat-idx">0${this.num}</span>
+        <div class="feat-icon-wrap">${this.icon}</div>
+        <h3>${this.title}</h3>
+        <p>${this.description}</p>
+        <span class="feat-tag">${this.tag}</span>
+      </div>`;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   CLASS 3 · AboutCard
+   Represents an about section card.
+───────────────────────────────────────────── */
+class AboutCard {
+  constructor(num, icon, title, body) {
+    this.num   = num;
+    this.icon  = icon;
+    this.title = title;
+    this.body  = body;
+  }
+  render() {
+    return `
+      <div class="about-panel">
+        <div class="panel-num">0${this.num} / 04</div>
+        <span class="panel-icon">${this.icon}</span>
+        <h3>${this.title}</h3>
+        <p>${this.body}</p>
+      </div>`;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   CLASS 4 · ContactForm
+   Handles validation and submission logic.
+   Demonstrates encapsulation — all form logic
+   lives inside this single class.
+───────────────────────────────────────────── */
+class ContactForm {
+  constructor(nameId, emailId, msgId) {
+    // Store DOM references as properties
+    this.nameEl  = document.getElementById(nameId);
+    this.emailEl = document.getElementById(emailId);
+    this.msgEl   = document.getElementById(msgId);
   }
 
-  /* ──────────────────────────────────
-     CLASS 2: ContactForm
-     Handles form validation and submission
-  ────────────────────────────────── */
-  class ContactForm {
-    constructor(nameId, emailId, messageId) {
-      this.nameField    = document.getElementById(nameId);
-      this.emailField   = document.getElementById(emailId);
-      this.messageField = document.getElementById(messageId);
-    }
-
-    // Method: validate all fields, return true if valid
-    validate() {
-      let valid = true;
-
-      // Validate name (min 2 chars)
-      const name = this.nameField.value.trim();
-      if (name.length < 2) {
-        this._showError('err-name', 'f-name');
-        valid = false;
-      } else {
-        this._clearError('err-name', 'f-name');
-      }
-
-      // Validate email (basic pattern)
-      const email = this.emailField.value.trim();
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        this._showError('err-email', 'f-email');
-        valid = false;
-      } else {
-        this._clearError('err-email', 'f-email');
-      }
-
-      // Validate message (min 10 chars)
-      const msg = this.messageField.value.trim();
-      if (msg.length < 10) {
-        this._showError('err-message', 'f-message');
-        valid = false;
-      } else {
-        this._clearError('err-message', 'f-message');
-      }
-
-      return valid;
-    }
-
-    // Method: reset the form fields
-    reset() {
-      this.nameField.value    = '';
-      this.emailField.value   = '';
-      this.messageField.value = '';
-    }
-
-    // Private helper — show error
-    _showError(errId, fieldId) {
-      document.getElementById(errId).classList.add('show');
-      document.getElementById(fieldId).classList.add('err');
-    }
-
-    // Private helper — clear error
-    _clearError(errId, fieldId) {
-      document.getElementById(errId).classList.remove('show');
-      document.getElementById(fieldId).classList.remove('err');
-    }
+  // Method: read current field values
+  getValues() {
+    return {
+      name:    this.nameEl.value.trim(),
+      email:   this.emailEl.value.trim(),
+      message: this.msgEl.value.trim(),
+    };
   }
 
-  /* ──────────────────────────────────
-     CLASS 3: Stat
-     Represents a homepage statistic
-  ────────────────────────────────── */
-  class Stat {
-    constructor(value, label) {
-      this.value = value;
-      this.label = label;
+  // Method: validate all fields; returns true if all pass
+  validate() {
+    const v = this.getValues();
+    let ok = true;
+
+    // Name validation
+    if (v.name.length < 2) {
+      this._setError('err-name', 'f-name', true);
+      ok = false;
+    } else {
+      this._setError('err-name', 'f-name', false);
     }
 
-    render() {
-      return `
-        <div class="stat-item">
-          <strong>${this.value}</strong>
-          <span>${this.label}</span>
-        </div>`;
-    }
-  }
-
-  /* ──────────────────────────────────
-     CLASS 4: AboutCard
-     Represents an about section card
-  ────────────────────────────────── */
-  class AboutCard {
-    constructor(icon, title, description) {
-      this.icon        = icon;
-      this.title       = title;
-      this.description = description;
+    // Email validation using regex
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email);
+    if (!emailOk) {
+      this._setError('err-email', 'f-email', true);
+      ok = false;
+    } else {
+      this._setError('err-email', 'f-email', false);
     }
 
-    render() {
-      return `
-        <div class="about-card">
-          <div class="icon">${this.icon}</div>
-          <h3>${this.title}</h3>
-          <p>${this.description}</p>
-        </div>`;
+    // Message validation
+    if (v.message.length < 10) {
+      this._setError('err-msg', 'f-msg', true);
+      ok = false;
+    } else {
+      this._setError('err-msg', 'f-msg', false);
     }
+
+    return ok;
   }
 
-  /* ══════════════════════════════════
-     INITIALISE DATA (using objects)
-  ══════════════════════════════════ */
-
-  // Create Feature objects
-  const features = [
-    new Feature(1, 'OOP with Classes',
-      'Demonstrates JavaScript ES6 classes with constructors, methods, and encapsulation — the backbone of OOP.'),
-    new Feature(2, 'Form Validation',
-      'A ContactForm class handles input validation using methods, keeping logic clean and reusable.'),
-    new Feature(3, 'Dynamic Rendering',
-      'Feature and Stat objects render themselves to HTML via their own render() methods — true object responsibility.'),
-    new Feature(4, 'SPA Navigation',
-      'Single-page navigation powered by a JavaScript function, simulating a multi-page experience without reloads.'),
-  ];
-
-  // Create Stat objects
-  const stats = [
-    new Stat('4+', 'OOP Classes'),
-    new Stat('JS', 'Vanilla Only'),
-    new Stat('100%', 'Frontend'),
-  ];
-
-  // Create AboutCard objects
-  const aboutCards = [
-    new AboutCard('🎯', 'Our Goal',
-      'Help beginners understand how OOP concepts like classes, objects, and methods work in real JavaScript code.'),
-    new AboutCard('📦', 'Encapsulation',
-      'Data and methods are bundled inside classes. Each class is responsible for its own logic — no messy globals.'),
-    new AboutCard('🔁', 'Reusability',
-      'Classes like Feature and Stat are reused to generate multiple UI components from a single template.'),
-    new AboutCard('🛠️', 'Practical Example',
-      'This project itself is the demo — every section you see was built using objects and class instances.'),
-  ];
-
-  /* ══════════════════════════════════
-     RENDER to DOM
-  ══════════════════════════════════ */
-  document.getElementById('features-list').innerHTML =
-    features.map(f => f.render()).join('');
-
-  document.getElementById('stats-container').innerHTML =
-    stats.map(s => s.render()).join('');
-
-  document.getElementById('about-grid').innerHTML =
-    aboutCards.map(c => c.render()).join('');
-
-  /* ══════════════════════════════════
-     NAVIGATION
-  ══════════════════════════════════ */
-  function navigate(page) {
-    // hide all sections
-    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-    // remove active nav style
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-    // show target
-    document.getElementById(page).classList.add('active');
-    document.getElementById('nav-' + page).classList.add('active');
-    // close mobile menu
-    document.getElementById('navLinks').classList.remove('open');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    return false; // prevent default
+  // Method: reset all fields to empty
+  reset() {
+    this.nameEl.value  = '';
+    this.emailEl.value = '';
+    this.msgEl.value   = '';
+    ['f-name','f-email','f-msg'].forEach(id =>
+      document.getElementById(id).classList.remove('err'));
   }
 
-  function toggleMenu() {
-    document.getElementById('navLinks').classList.toggle('open');
+  // Private helper: toggle error state on a field
+  _setError(errId, fieldId, show) {
+    document.getElementById(errId).classList.toggle('show', show);
+    document.getElementById(fieldId).classList.toggle('err', show);
   }
+}
 
-  /* ══════════════════════════════════
-     FORM SUBMISSION (using ContactForm class)
-  ══════════════════════════════════ */
-  const contactForm = new ContactForm('f-name', 'f-email', 'f-message');
-
-  function submitForm() {
-    const banner = document.getElementById('success-banner');
-    banner.classList.remove('show');
-
-    if (contactForm.validate()) {
-      // Get the name for personalised message
-      const name = document.getElementById('f-name').value.trim();
-      contactForm.reset();
-      banner.textContent = `✅ Thanks, ${name}! Your message has been received.`;
-      banner.classList.add('show');
-    }
+/* ─────────────────────────────────────────────
+   CLASS 5 · User
+   A small data class created on form submission.
+   Demonstrates object instantiation from input.
+───────────────────────────────────────────── */
+class User {
+  constructor(name, email, message) {
+    this.name      = name;
+    this.email     = email;
+    this.message   = message;
+    this.timestamp = new Date().toLocaleString();
   }
+  // Method: readable string for console logging
+  toString() {
+    return `User { name: "${this.name}", email: "${this.email}", at: "${this.timestamp}" }`;
+  }
+}
 
+/* ═══════════════════════════════════════
+   DATA — Instantiate objects
+═══════════════════════════════════════ */
+
+const stats = [
+  new Stat('4+', 'OOP Classes defined'),
+  new Stat('100%', 'Vanilla JavaScript'),
+  new Stat('ES6+', 'Modern standards'),
+];
+
+const features = [
+  new Feature(1, '🏗️', 'Class-based Architecture',
+    'Every interactive element is powered by a JavaScript class — NavController, Feature, ContactForm, User — each with clear properties and methods.',
+    'Encapsulation'),
+  new Feature(2, '✅', 'Smart Form Validation',
+    'The ContactForm class handles all validation internally via its validate() method. No global functions, no scattered logic — pure OOP.',
+    'Method design'),
+  new Feature(3, '⚡', 'Dynamic Rendering',
+    'Feature cards are not hard-coded in HTML. Each Feature object generates its own markup via render(), showcasing object responsibility.',
+    'OOP in action'),
+  new Feature(4, '📱', 'Responsive by Design',
+    'Built with CSS Grid and media queries — works seamlessly on all screen sizes with no framework required.',
+    'Mobile-first'),
+];
+
+const aboutCards = [
+  new AboutCard(1, '🎯', 'Project Goal',
+    'Help beginners see how OOP concepts like classes, objects, and methods work in real JavaScript code — not just in theory.'),
+  new AboutCard(2, '📦', 'Encapsulation',
+    'Data and methods are bundled inside classes. Each class owns its logic — no global variables, no tangled spaghetti code.'),
+  new AboutCard(3, '🔁', 'Reusability',
+    'Write a class once, instantiate as many objects as needed. Feature cards, stat blocks, and about cards all share the same pattern.'),
+  new AboutCard(4, '🛠️', 'Real Example',
+    'This entire website is the demonstration — every section you see was built using objects and class instances running live.'),
+];
+
+/* ═══════════════════════════════════════
+   RENDER objects to DOM
+═══════════════════════════════════════ */
+document.getElementById('stats-container').innerHTML =
+  stats.map(s => s.render()).join('');
+
+document.getElementById('features-list').innerHTML =
+  features.map(f => f.render()).join('');
+
+document.getElementById('about-cards').innerHTML =
+  aboutCards.map(c => c.render()).join('');
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════ */
+function navigate(page) {
+  // Hide all sections
+  document.querySelectorAll('section').forEach(s => {
+    s.classList.remove('active', 'visible');
+  });
+  // Deactivate all nav links
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  // Show target section
+  const target = document.getElementById(page);
+  target.classList.add('active');
+  // Trigger enter animation on next frame
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      target.classList.add('visible');
+      // Stagger children
+      target.querySelectorAll('.stagger').forEach(el => el.classList.add('go'));
+    });
+  });
+  // Mark nav link active
+  document.getElementById('nav-' + page).classList.add('active');
+  // Close mobile menu
+  document.getElementById('navLinks').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  return false;
+}
+
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// Navbar scroll shadow
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('opaque', window.scrollY > 10);
+});
+
+// Trigger first section animation on load
+window.addEventListener('DOMContentLoaded', () => {
+  const home = document.getElementById('home');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      home.classList.add('visible');
+      home.querySelectorAll('.stagger').forEach(el => el.classList.add('go'));
+    });
+  });
+});
+
+/* ═══════════════════════════════════════
+   CONTACT FORM (using ContactForm class)
+═══════════════════════════════════════ */
+const contactForm = new ContactForm('f-name', 'f-email', 'f-msg');
+
+function submitForm() {
+  const banner = document.getElementById('success-banner');
+  banner.classList.remove('show');
+
+  if (!contactForm.validate()) return;
+
+  // Create a User object from the valid data
+  const values = contactForm.getValues();
+  const user = new User(values.name, values.email, values.message);
+
+  // Log user object to console (great for learning)
+  console.log('📬 Submitted:', user.toString());
+
+  // Show success message personalised to the user object
+  document.getElementById('success-text').textContent =
+    `Thanks, ${user.name}! We'll reply to ${user.email} soon.`;
+  banner.classList.add('show');
+
+  contactForm.reset();
+}
 </script>
 </body>
 </html>
