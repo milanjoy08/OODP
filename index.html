@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OODP Mini Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── CSS Variables ── */
+    :root {
+      --bg:       #f5f3ee;
+      --surface:  #ffffff;
+      --border:   #e2ddd5;
+      --accent:   #2563eb;
+      --accent2:  #f59e0b;
+      --text:     #1a1a2e;
+      --muted:    #6b7280;
+      --radius:   14px;
+      --shadow:   0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245,243,238,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--text); }
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+    .nav-links a {
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ── Sections ── */
+    section {
+      display: none;
+      min-height: 100vh;
+      padding: 5rem 2rem 4rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      animation: fadeUp 0.45s ease both;
+    }
+    section.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Tag/Badge ── */
+    .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ── HOME ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 80vh;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+      position: relative;
+    }
+    .hero h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--accent2);
+      border-radius: 2px;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.75rem 1.75rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+    .btn-outline:hover { background: var(--accent); color: #fff; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat-item strong {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: 'Space Mono', monospace;
+      color: var(--accent);
+    }
+    .stat-item span { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── ABOUT ── */
+    .section-header { margin-bottom: 3rem; }
+    .section-header h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.6rem;
+    }
+    .section-header p { color: var(--muted); max-width: 560px; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .about-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s;
+    }
+    .about-card:hover { transform: translateY(-4px); }
+    .about-card .icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .about-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .about-card p { font-size: 0.9rem; color: var(--muted); }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.6rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+    .feature-card:hover::before { transform: scaleX(1); }
+    .feature-card .num {
+      font-family: 'Space Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #e5e7eb;
+      line-height: 1;
+      margin-bottom: 0.8rem;
+    }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.875rem; color: var(--muted); }
+    #features-list { /* populated by JS */ }
+
+    /* ── CONTACT ── */
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .contact-info h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .contact-info p  { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; }
+    .contact-info ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .contact-info li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .contact-info li .dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.9rem;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--accent); background: #fff; }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .error-msg {
+      font-size: 0.78rem;
+      color: #ef4444;
+      margin-top: 4px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+    .form-group input.err,
+    .form-group textarea.err { border-color: #ef4444; }
+
+    /* success banner */
+    #success-banner {
+      display: none;
+      background: #dcfce7;
+      border: 1.5px solid #86efac;
+      color: #166534;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    #success-banner.show { display: block; animation: fadeUp 0.3s ease; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--text);
+      color: #9ca3af;
+      text-align: center;
+      padding: 1.5rem 2rem;
+      font-size: 0.8rem;
+    }
+    footer strong { color: #fff; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links { display: none; flex-direction: column; position: absolute;
+        top: 64px; left: 0; right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem; gap: 0.25rem; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      section { padding: 4rem 1.2rem 3rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav>
+  <div class="nav-logo">OO<span>DP</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="navigate('home')" class="active" id="nav-home">Home</a></li>
+    <li><a href="#" onclick="navigate('about')" id="nav-about">About</a></li>
+    <li><a href="#" onclick="navigate('features')" id="nav-features">Features</a></li>
+    <li><a href="#" onclick="navigate('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ── HOME ── -->
+<section id="home" class="active">
+  <div class="hero">
+    <span class="badge">Mini Project · OODP</span>
+    <h1>Object-Oriented<br>Design &amp; <em>Programming</em></h1>
+    <p>A beginner-friendly project demonstrating core OOP concepts — classes, objects, and methods — built with pure HTML, CSS, and JavaScript.</p>
+    <div class="hero-btns">
+      <button class="btn" onclick="navigate('features')">Explore Features →</button>
+      <button class="btn btn-outline" onclick="navigate('about')">Learn More</button>
+    </div>
+    <div class="stats" id="stats-container"></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="section-header">
+    <span class="badge">About</span>
+    <h2>What is this project?</h2>
+    <p>A hands-on introduction to Object-Oriented Programming concepts using real, working code.</p>
+  </div>
+  <div class="about-grid" id="about-grid"></div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <div class="section-header">
+    <span class="badge">Features</span>
+    <h2>What's inside?</h2>
+    <p>Each feature is created as a JavaScript object — demonstrating OOP in action.</p>
+  </div>
+  <div class="features-grid" id="features-list"></div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="section-header">
+    <span class="badge">Contact</span>
+    <h2>Get in Touch</h2>
+    <p>Fill out the form below. Form handling is powered by a JavaScript class.</p>
+  </div>
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <h3>Why contact us?</h3>
+      <p>Have questions about OOP? Want to collaborate or share feedback? Reach out!</p>
+      <ul>
+        <li><span class="dot"></span> Student-friendly project</li>
+        <li><span class="dot"></span> Built for learning purposes</li>
+        <li><span class="dot"></span> Open for suggestions</li>
+        <li><span class="dot"></span> Form validation included</li>
+      </ul>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Alice Johnson"/>
+        <div class="error-msg" id="err-name">Name must be at least 2 characters.</div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="f-email" placeholder="alice@example.com"/>
+        <div class="error-msg" id="err-email">Please enter a valid email address.</div>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="f-message" placeholder="Your message here…"></textarea>
+        <div class="error-msg" id="err-message">Message must be at least 10 characters.</div>
+      </div>
+      <button class="btn" style="width:100%;justify-content:center" onclick="submitForm()">Send Message ✉</button>
+      <div id="success-banner">✅ Message sent! Thank you for reaching out.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>Built with ♥ for <strong>OODP Mini Project</strong> · Vanilla HTML, CSS &amp; JavaScript</p>
+</footer>
+
+<!-- ════════════════════════════════
+     J A V A S C R I P T  (OOP)
+     ════════════════════════════════ -->
+<script>
+
+  /* ──────────────────────────────────
+     CLASS 1: Feature
+     Represents a single project feature
+  ────────────────────────────────── */
+  class Feature {
+    constructor(number, title, description) {
+      this.number      = number;
+      this.title       = title;
+      this.description = description;
+    }
+
+    // Method: renders the feature as an HTML card string
+    render() {
+      return `
+        <div class="feature-card">
+          <div class="num">0${this.number}</div>
+          <h3>${this.title}</h3>
+          <p>${this.description}</p>
+        </div>`;
+    }
+  }
+
+  /* ──────────────────────────────────
+     CLASS 2: ContactForm
+     Handles form validation and submission
+  ────────────────────────────────── */
+  class ContactForm {
+    constructor(nameId, emailId, messageId) {
+      this.nameField    = document.getElementById(nameId);
+      this.emailField   = document.getElementById(emailId);
+      this.messageField = document.getElementById(messageId);
+    }
+
+    // Method: validate all fields, return true if valid
+    validate() {
+      let valid = true;
+
+      // Validate name (min 2 chars)
+      const name = this.nameField.value.trim();
+      if (name.length < 2) {
+        this._showError('err-name', 'f-name');
+        valid = false;
+      } else {
+        this._clearError('err-name', 'f-name');
+      }
+
+      // Validate email (basic pattern)
+      const email = this.emailField.value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        this._showError('err-email', 'f-email');
+        valid = false;
+      } else {
+        this._clearError('err-email', 'f-email');
+      }
+
+      // Validate message (min 10 chars)
+      const msg = this.messageField.value.trim();
+      if (msg.length < 10) {
+        this._showError('err-message', 'f-message');
+        valid = false;
+      } else {
+        this._clearError('err-message', 'f-message');
+      }
+
+      return valid;
+    }
+
+    // Method: reset the form fields
+    reset() {
+      this.nameField.value    = '';
+      this.emailField.value   = '';
+      this.messageField.value = '';
+    }
+
+    // Private helper — show error
+    _showError(errId, fieldId) {
+      document.getElementById(errId).classList.add('show');
+      document.getElementById(fieldId).classList.add('err');
+    }
+
+    // Private helper — clear error
+    _clearError(errId, fieldId) {
+      document.getElementById(errId).classList.remove('show');
+      document.getElementById(fieldId).classList.remove('err');
+    }
+  }
+
+  /* ──────────────────────────────────
+     CLASS 3: Stat
+     Represents a homepage statistic
+  ────────────────────────────────── */
+  class Stat {
+    constructor(value, label) {
+      this.value = value;
+      this.label = label;
+    }
+
+    render() {
+      return `
+        <div class="stat-item">
+          <strong>${this.value}</strong>
+          <span>${this.label}</span>
+        </div>`;
+    }
+  }
+
+  /* ──────────────────────────────────
+     CLASS 4: AboutCard
+     Represents an about section card
+  ────────────────────────────────── */
+  class AboutCard {
+    constructor(icon, title, description) {
+      this.icon        = icon;
+      this.title       = title;
+      this.description = description;
+    }
+
+    render() {
+      return `
+        <div class="about-card">
+          <div class="icon">${this.icon}</div>
+          <h3>${this.title}</h3>
+          <p>${this.description}</p>
+        </div>`;
+    }
+  }
+
+  /* ══════════════════════════════════
+     INITIALISE DATA (using objects)
+  ══════════════════════════════════ */
+
+  // Create Feature objects
+  const features = [
+    new Feature(1, 'OOP with Classes',
+      'Demonstrates JavaScript ES6 classes with constructors, methods, and encapsulation — the backbone of OOP.'),
+    new Feature(2, 'Form Validation',
+      'A ContactForm class handles input validation using methods, keeping logic clean and reusable.'),
+    new Feature(3, 'Dynamic Rendering',
+      'Feature and Stat objects render themselves to HTML via their own render() methods — true object responsibility.'),
+    new Feature(4, 'SPA Navigation',
+      'Single-page navigation powered by a JavaScript function, simulating a multi-page experience without reloads.'),
+  ];
+
+  // Create Stat objects
+  const stats = [
+    new Stat('4+', 'OOP Classes'),
+    new Stat('JS', 'Vanilla Only'),
+    new Stat('100%', 'Frontend'),
+  ];
+
+  // Create AboutCard objects
+  const aboutCards = [
+    new AboutCard('🎯', 'Our Goal',
+      'Help beginners understand how OOP concepts like classes, objects, and methods work in real JavaScript code.'),
+    new AboutCard('📦', 'Encapsulation',
+      'Data and methods are bundled inside classes. Each class is responsible for its own logic — no messy globals.'),
+    new AboutCard('🔁', 'Reusability',
+      'Classes like Feature and Stat are reused to generate multiple UI components from a single template.'),
+    new AboutCard('🛠️', 'Practical Example',
+      'This project itself is the demo — every section you see was built using objects and class instances.'),
+  ];
+
+  /* ══════════════════════════════════
+     RENDER to DOM
+  ══════════════════════════════════ */
+  document.getElementById('features-list').innerHTML =
+    features.map(f => f.render()).join('');
+
+  document.getElementById('stats-container').innerHTML =
+    stats.map(s => s.render()).join('');
+
+  document.getElementById('about-grid').innerHTML =
+    aboutCards.map(c => c.render()).join('');
+
+  /* ══════════════════════════════════
+     NAVIGATION
+  ══════════════════════════════════ */
+  function navigate(page) {
+    // hide all sections
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    // remove active nav style
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    // show target
+    document.getElementById(page).classList.add('active');
+    document.getElementById('nav-' + page).classList.add('active');
+    // close mobile menu
+    document.getElementById('navLinks').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false; // prevent default
+  }
+
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  /* ══════════════════════════════════
+     FORM SUBMISSION (using ContactForm class)
+  ══════════════════════════════════ */
+  const contactForm = new ContactForm('f-name', 'f-email', 'f-message');
+
+  function submitForm() {
+    const banner = document.getElementById('success-banner');
+    banner.classList.remove('show');
+
+    if (contactForm.validate()) {
+      // Get the name for personalised message
+      const name = document.getElementById('f-name').value.trim();
+      contactForm.reset();
+      banner.textContent = `✅ Thanks, ${name}! Your message has been received.`;
+      banner.classList.add('show');
+    }
+  }
+
+</script>
+</body>
+</html>
